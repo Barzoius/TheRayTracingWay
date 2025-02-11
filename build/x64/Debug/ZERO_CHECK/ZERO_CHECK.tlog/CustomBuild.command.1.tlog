@@ -1,0 +1,10 @@
+^C:\DEV\THERAYTRACINGWAY\BUILD\CMAKEFILES\217A85BA023EC1CEB7E7A9B6D310002F\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/dev/TheRayTracingWay -BC:/dev/TheRayTracingWay/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/dev/TheRayTracingWay/build/theraytracingway.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
