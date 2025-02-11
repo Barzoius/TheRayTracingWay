@@ -5,18 +5,29 @@
 
 #include <iostream>
 
+bool hit_sphere(const point3& center, double radius, const ray& r) {
+    vec3 oc = center - r.GetRayOrigin();
+    auto a = dot(r.GetRaydirection(), r.GetRaydirection());
+    auto b = -2.0 * dot(r.GetRaydirection(), oc);
+    auto c = dot(oc, oc) - radius*radius;
+    auto discriminant = b*b - 4*a*c;
+    return (discriminant >= 0);
+}
 
 color ray_color(const ray& r)
 {
+    if (hit_sphere(point3(0,0,-1), 0.5, r))
+        return color(1, 0, 0);
+
+
     vec3 unit_direction = unit_vector(r.GetRaydirection());
     auto a = 0.5*(unit_direction.y() + 1.0);
-    return (1.0-a)*color(1.0, 1.0, 1.0) + a*color(0.5, 0.7, 1.0);
+    return (1.0-a)*color(1.0, 0.5, 1.0) + a*color(0.5, 0.7, 1.0);
 }
 
 int main()
 {
-    // camera - viewport distance
-    auto focalLength = 1.0;
+
 
     auto aspectRatio = 16.0 / 9.0;
 
@@ -24,6 +35,8 @@ int main()
     int HEIGHT = int(WIDTH / aspectRatio);
     HEIGHT = (HEIGHT < 1) ? 1 : HEIGHT;
 
+    // camera - viewport distance
+    auto focalLength = 1.0;
     auto viewHeight = 2.0;
     auto viewWidth = viewHeight * (double(WIDTH)/HEIGHT);
 
