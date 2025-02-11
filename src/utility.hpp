@@ -14,7 +14,6 @@ inline double degrees_to_radians(double degrees) {
     return degrees * DPI / 180.0;
 }
 
-
 #include "color.hpp"
 #include "range.hpp"
 #include "ray.hpp"
