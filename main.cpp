@@ -1,28 +1,20 @@
-#include "src/vec3.hpp"
-#include "src/ray.hpp"
-#include "src/color.hpp"
+#include "src/utility.hpp"
+
+#include "src/drawable.hpp" 
+#include "src/drawableList.hpp"
+#include "src/sphere.hpp"
 
 
-#include <iostream>
-
-bool hit_sphere(const point3& center, double radius, const ray& r) {
-    vec3 oc = center - r.GetRayOrigin();
-    auto a = dot(r.GetRaydirection(), r.GetRaydirection());
-    auto b = -2.0 * dot(r.GetRaydirection(), oc);
-    auto c = dot(oc, oc) - radius*radius;
-    auto discriminant = b*b - 4*a*c;
-    return (discriminant >= 0);
-}
-
-color ray_color(const ray& r)
+color ray_color(const ray& r, const drawable& world)
 {
-    if (hit_sphere(point3(0,0,-1), 0.5, r))
-        return color(1, 0, 0);
+    hitData info;
+    if (world.hit(r, 0, INF, info)) {
+        return 0.5 * (info.normal + color(1,1,1));
+    }
 
-
-    vec3 unit_direction = unit_vector(r.GetRaydirection());
+    vec3 unit_direction = normalize(r.GetRaydirection());
     auto a = 0.5*(unit_direction.y() + 1.0);
-    return (1.0-a)*color(1.0, 0.5, 1.0) + a*color(0.5, 0.7, 1.0);
+    return (1.0-a)*color(1.0, 1.0, 1.0) + a*color(0.5, 0.7, 1.0);
 }
 
 int main()
@@ -34,6 +26,11 @@ int main()
     int WIDTH = 400;
     int HEIGHT = int(WIDTH / aspectRatio);
     HEIGHT = (HEIGHT < 1) ? 1 : HEIGHT;
+
+    drawableList world;
+
+    world.Add(std::make_shared<Sphere>(point3(0,0,-1), 0.5));
+    world.Add(std::make_shared<Sphere>(point3(0,-100.5,-1), 100));
 
     // camera - viewport distance
     auto focalLength = 1.0;
@@ -65,7 +62,7 @@ int main()
             
             ray Ray(camCenter, rayDir);
 
-            color pixel = ray_color(Ray);
+            color pixel = ray_color(Ray, world);
             write_color(std::cout, pixel);
 
         }
