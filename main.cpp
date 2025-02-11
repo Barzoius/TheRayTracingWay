@@ -1,5 +1,6 @@
 #include "src/utility.hpp"
 
+
 #include "src/drawable.hpp" 
 #include "src/drawableList.hpp"
 #include "src/sphere.hpp"
@@ -8,7 +9,7 @@
 color ray_color(const ray& r, const drawable& world)
 {
     hitData info;
-    if (world.hit(r, 0, INF, info)) {
+    if (world.hit(r, range(0, INF), info)) {
         return 0.5 * (info.normal + color(1,1,1));
     }
 

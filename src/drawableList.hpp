@@ -22,17 +22,16 @@ public:
     void Clear() {dList.clear();}
 
     bool hit( const ray& r, 
-              double tMin,
-              double tMax,
+              range tRange,
               hitData& hitInfo) const override
               {
                 hitData info;
                 bool hitSmth = false;
-                auto currentClosest = tMax;
+                auto currentClosest = tRange.max;
 
                 for(const auto& drawable : dList)
                 {
-                    if(drawable->hit(r, tMin, currentClosest, info))
+                    if(drawable->hit(r, range(tRange.min, currentClosest), info))
                     {
                         hitSmth = true;
                         currentClosest = info.t;

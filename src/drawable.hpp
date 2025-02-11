@@ -24,8 +24,7 @@ public:
     virtual ~drawable() = default;
 
     virtual bool hit(const ray& r, 
-                    double tMin,
-                    double tMax,
+                    range tRange,
                     hitData& hitInfo) const = 0;
 };
 
