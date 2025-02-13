@@ -22,6 +22,8 @@ public:
 
     int samples = 10;
 
+    int maxBounces = 10;
+
     void render(const drawable& world)
     {
         initialize();
@@ -39,7 +41,7 @@ public:
                 for(int sample = 0; sample < samples; sample++)
                 {
                     ray Ray = get_ray(i, j);
-                    pixel += ray_color(Ray, world);
+                    pixel += ray_color(Ray, maxBounces, world);
                 }
     
                 write_color(std::cout, samplesScale * pixel);
@@ -97,12 +99,16 @@ private:
         return vec3(drand() - 0.5, drand() -0.5, 0);
     }
 
-    color ray_color(const ray& r, const drawable& world)
+    color ray_color(const ray& r, int bounces, const drawable& world)
     {
+        if (bounces <= 0)
+            return color(0,0,0);
+
         hitData info;
         
-        if (world.hit(r, range(0, INF), info)) {
-            return 0.5 * (info.normal + color(1,1,1));
+        if (world.hit(r, range(0.001, INF), info)) {
+            vec3 dir = info.normal + generateInHemisphere(info.normal);
+            return 0.5 * ray_color(ray(info.p, dir), bounces - 1, world);
         }
 
         vec3 unit_direction = normalize(r.GetRaydirection());

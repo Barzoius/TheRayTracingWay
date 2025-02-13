@@ -54,6 +54,16 @@ public:
     {
         return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
     }
+
+    static vec3 vrand()
+    {
+        return vec3(drand(), drand(), drand());
+    }
+
+    static vec3 vrand(double min, double max)
+    {
+        return vec3(drand(min, max), drand(min, max), drand(min, max));
+    }
     
 };
 
@@ -101,6 +111,29 @@ inline vec3 cross(const vec3& u, const vec3& v) {
 
 inline vec3 normalize(const vec3& v) {
     return v / v.length();
+}
+
+inline vec3 nvrand()
+{
+    while(true)
+    {
+        auto p = vec3::vrand(-1, 1);
+        auto lensq = p.length_squared();
+
+        // we make sure that is not too close to the center where it can become zero
+        if(1e-160 < lensq <= 1) 
+            return p / sqrt(lensq);
+    }
+}
+
+inline vec3 generateInHemisphere(const vec3& surfaceNormal)
+{
+    vec3 v = nvrand();
+
+    if(dot(v, surfaceNormal) > 0.0) 
+        return v;
+    else
+        return -v;
 }
 
 #endif
