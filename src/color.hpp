@@ -8,11 +8,24 @@
 
 using color = vec3;
 
+inline double gammaCorrect(double linearComponent)
+{
+    if(linearComponent > 0)
+        return std::sqrt(linearComponent);
+    
+    return 0;
+}
+
 void write_color(std::ostream& out, const color& pixel)
 {
     auto r = pixel.x();
     auto g = pixel.y();
     auto b = pixel.z();
+
+    r = gammaCorrect(r);
+    g = gammaCorrect(g);
+    b = gammaCorrect(b);
+
 
     static const range intensity(0.000, 0.999);
 
