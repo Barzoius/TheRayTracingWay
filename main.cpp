@@ -5,6 +5,7 @@
 #include "src/drawableList.hpp"
 #include "src/sphere.hpp"
 
+//  ./build/Debug/theraytracingway.exe > image.ppm
 
 int main()
 {
@@ -17,6 +18,7 @@ int main()
 
     Camera.aspectRatio  = 16.0 / 9.0;
     Camera.WIDTH = 400;
+    Camera.samples = 100;
 
     Camera.render(world);
 

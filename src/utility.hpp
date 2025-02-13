@@ -2,6 +2,7 @@
 #define UTILITY_HPP
 
 #include <cmath>
+#include <cstdlib>
 #include <iostream>
 #include <limits>
 #include <memory>
@@ -12,6 +13,16 @@ const double DPI = 3.1415926535897932385;
 
 inline double degrees_to_radians(double degrees) {
     return degrees * DPI / 180.0;
+}
+
+inline double drand()
+{
+    return std::rand() / (RAND_MAX + 1.0);  // [0, 1)
+}
+
+inline double drand(double min, double max)
+{
+    return min + (max-min) * drand(); // [min, max)
 }
 
 #include "color.hpp"

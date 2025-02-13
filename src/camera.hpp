@@ -7,14 +7,20 @@ class camera
 {
 private:
     int HEIGHT; 
+
+    double samplesScale;
+
     point3 camCenter;
     point3 firstPixel;
     vec3 pixelRowDelta;
     vec3 pixelColDelta;
 
+
 public:
     double aspectRatio = 1.0;
     int WIDTH = 100;
+
+    int samples = 10;
 
     void render(const drawable& world)
     {
@@ -28,14 +34,15 @@ public:
             
             for (int i = 0; i < WIDTH; i++)
             {
+                color pixel(0,0,0);
+
+                for(int sample = 0; sample < samples; sample++)
+                {
+                    ray Ray = get_ray(i, j);
+                    pixel += ray_color(Ray, world);
+                }
     
-                auto centerPixel = firstPixel + (i * pixelRowDelta) + (j * pixelColDelta);
-                auto rayDir = centerPixel - camCenter;
-                
-                ray Ray(camCenter, rayDir);
-    
-                color pixel = ray_color(Ray, world);
-                write_color(std::cout, pixel);
+                write_color(std::cout, samplesScale * pixel);
     
             }
         }
@@ -48,6 +55,8 @@ private:
     {
         HEIGHT = int(WIDTH / aspectRatio);
         HEIGHT = (HEIGHT < 1) ? 1 : HEIGHT;
+
+        samplesScale = 1.0 / samples;
 
         camCenter = point3(0, 0, 0);
 
@@ -65,6 +74,27 @@ private:
 
          firstPixel = viewOriginCorner + 0.5 * (pixelRowDelta + pixelColDelta);
 
+    }
+
+    ray get_ray(int i, int j) const
+    {
+        vec3 offset = get_sample_region();
+
+        auto samplePixel = firstPixel
+                         + ((i + offset.x()) * pixelRowDelta)
+                         + ((j + offset.y()) * pixelColDelta);
+
+        auto rayOrigin = camCenter;
+        auto rayDirection = samplePixel - rayOrigin;
+
+        return ray(rayOrigin, rayDirection);
+    }
+
+
+    vec3 get_sample_region() const
+    {
+        // vector to random point in the square [-0.5, 0.5]
+        return vec3(drand() - 0.5, drand() -0.5, 0);
     }
 
     color ray_color(const ray& r, const drawable& world)
